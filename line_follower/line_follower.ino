@@ -67,6 +67,7 @@ float linefollow()
   else
   {
     testkeduamotor(speed,speed,"maju","maju");
+    //tambah
   }
  }
 }
