@@ -38,6 +38,8 @@ float linefollow()
 {
   testkeduamotor(0,0,"maju","maju");
   float KP = 0.03, KI = 0.0, KD = 0.00, speed = 45;
+  //float KP = 0.02, KI = 0.003, KD = 0.00, speed = 45;
+  //Test PID
   while(true)
   {
    errt1 = samplingsensor();
