@@ -93,3 +93,4 @@ void belokananmaju(int8_t speed)
     motorjalankanan(speed-(speed/2), "maju");
     motorjalankiri(speed, "maju");
 }
+//Akhir dari library
