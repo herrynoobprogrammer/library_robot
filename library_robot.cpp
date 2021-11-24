@@ -73,6 +73,12 @@ void testkeduamotor(int8_t speed_kiri,int8_t speed_kanan, String arah_kiri, Stri
     motorjalankanan(speed_kanan, arah_kanan);
     motorjalankiri(speed_kiri, arah_kiri);
 }
+void majutimer(int8_t speed, int delay_)
+{
+    testkeduamotor(speed,speed, "maju", "maju");
+    delay(delay_);
+    testkeduamotor(0,0, "maju", "maju");
+}
 void belokiri(int8_t speed)
 {
     motorjalankanan(speed, "maju");
