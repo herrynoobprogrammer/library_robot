@@ -23,9 +23,9 @@ void manualcontrol();
 void autocontrol();
 void readsensor();
 
-void testmotorkanan(int8_t speed, String arah);
-void testmotorkiri(int8_t speed, String arah);
-void testkeduamotor(int8_t speed_kiri,int8_t speed_kanan, String arah_kiri, String arah_kanan);
+void testmotorkanan(int8_t speed);
+void testmotorkiri(int8_t speed);
+void testkeduamotor(int8_t speed_kiri, int8_t speed_kanan);
 void belokiri(int8_t speed);
 void belokanan(int8_t speed);
 void belokirimaju(int8_t speed);
