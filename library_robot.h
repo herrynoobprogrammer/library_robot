@@ -34,5 +34,8 @@ void majutimer(int8_t speed, int delay_);
 int satusensor(int pin);
 void linefindkanan(int8_t speed, int sensor);
 void linefindkiri(int8_t speed, int sensor);
-
+int sampling();
+float lf_crossfind(int8_t speed);
+float linefollower(int8_t speed);
+int detectcross();
 #endif
