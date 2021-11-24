@@ -30,5 +30,9 @@ void belokiri(int8_t speed);
 void belokanan(int8_t speed);
 void belokirimaju(int8_t speed);
 void belokananmaju(int8_t speed);
+void majutimer(int8_t speed, int delay_);
+int satusensor(int pin);
+void linefindkanan(int8_t speed, int sensor);
+void linefindkiri(int8_t speed, int sensor);
 
 #endif

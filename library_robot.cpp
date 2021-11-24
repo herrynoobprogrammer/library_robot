@@ -34,6 +34,12 @@ void readsensor()
   Serial.print(readPin[5]); 
   Serial.println();
 }
+int satusensor(int pin)
+{
+  uint8_t hasilbaca;
+  hasilbaca = digitalRead(sPin[pin]);
+  return hasilbaca;
+}
 
 void motorjalankanan(int8_t speed, String arah){
     if (arah == "maju")
@@ -73,6 +79,12 @@ void testkeduamotor(int8_t speed_kiri,int8_t speed_kanan, String arah_kiri, Stri
     motorjalankanan(speed_kanan, arah_kanan);
     motorjalankiri(speed_kiri, arah_kiri);
 }
+void majutimer(int8_t speed, int delay_)
+{
+    testkeduamotor(speed,speed, "maju", "maju");
+    delay(delay_);
+    testkeduamotor(0,0, "maju", "maju");
+}
 void belokiri(int8_t speed)
 {
     motorjalankanan(speed, "maju");
@@ -92,5 +104,32 @@ void belokananmaju(int8_t speed)
 {
     motorjalankanan(speed-(speed/2), "maju");
     motorjalankiri(speed, "maju");
+}
+
+void linefindkanan(int8_t speed, int sensor)
+{
+    bool isFound = false;
+    while(!isFound)
+    {
+        int pin = satusensor(sensor);
+        belokananmaju(speed);
+        if (pin == 1)
+        {
+            isFound = true;
+        }
+    }
+}
+void linefindkiri(int8_t speed, int sensor)
+{
+    bool isFound = false;
+    while(!isFound)
+    {
+        int pin = satusensor(sensor);
+        belokirimaju(speed);
+        if (pin == 1)
+        {
+            isFound = true;
+        }
+    }
 }
 //Akhir dari library
