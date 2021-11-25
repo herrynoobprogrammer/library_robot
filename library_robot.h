@@ -23,6 +23,8 @@ void manualcontrol();
 void autocontrol();
 void readsensor();
 
+void motorjalankanan(int8_t speed);
+void motorjalankiri(int8_t speed);
 void testmotorkanan(int8_t speed);
 void testmotorkiri(int8_t speed);
 void testkeduamotor(int8_t speed_kiri, int8_t speed_kanan);
@@ -35,7 +37,8 @@ int satusensor(int pin);
 void linefindkanan(int8_t speed, int sensor);
 void linefindkiri(int8_t speed, int sensor);
 int sampling();
-float lf_crossfind(int8_t speed);
-float linefollower(int8_t speed);
+void lf_crossfind(int8_t speed);
+void lf_delay(int8_t speed, int delay_);
+void linefollower(int8_t speed);
 int detectcross();
 #endif

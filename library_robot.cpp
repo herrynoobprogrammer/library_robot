@@ -69,7 +69,7 @@ void motorjalankanan(int8_t speed)
     if (speed < 0)
     {
         analogWrite(pwm1, 0);
-        analogWrite(pwm2, speed);
+        analogWrite(pwm2, speed * -1);
     }
 }
 void motorjalankiri(int8_t speed)
@@ -82,7 +82,7 @@ void motorjalankiri(int8_t speed)
     if (speed < 0)
     {
         analogWrite(pwm3, 0);
-        analogWrite(pwm4, speed);
+        analogWrite(pwm4, speed * -1);
     }
 }
 
@@ -90,29 +90,27 @@ void testmotorkanan(int8_t speed)
 {
     motorjalankanan(speed);
 }
+
 void testmotorkiri(int8_t speed)
 {
     motorjalankiri(speed);
 }
+
 void testkeduamotor(int8_t speed_kiri, int8_t speed_kanan)
 {
     motorjalankanan(speed_kanan);
     motorjalankiri(speed_kiri);
 }
-void majutimer(int8_t speed, int delay_)
-{
-    testkeduamotor(speed, speed);
-    delay(delay_);
-    testkeduamotor(0, 0);
-}
+
 void belokiri(int8_t speed)
 {
     motorjalankanan(speed);
-    motorjalankiri(speed);
+    motorjalankiri(-speed);
 }
+
 void belokanan(int8_t speed)
 {
-    motorjalankanan(speed);
+    motorjalankanan(-speed);
     motorjalankiri(speed);
 }
 void belokirimaju(int8_t speed)
@@ -126,13 +124,29 @@ void belokananmaju(int8_t speed)
     motorjalankiri(speed);
 }
 
+void majutimer(int8_t speed, int delay_)
+{
+    bool isTimeout = false;
+    unsigned long timeStart = millis();
+
+    while (!isTimeout)
+    {
+        testkeduamotor(speed, speed);
+        if ((unsigned long)millis() - timeStart > delay_)
+        {
+            isTimeout = true;
+            testkeduamotor(0, 0);
+        }
+    }
+}
+
 void linefindkanan(int8_t speed, int sensor)
 {
     bool isFound = false;
     while (!isFound)
     {
         int pin = satusensor(sensor);
-        belokananmaju(speed);
+        belokanan(speed);
         if (pin == 1)
         {
             isFound = true;
@@ -145,7 +159,7 @@ void linefindkiri(int8_t speed, int sensor)
     while (!isFound)
     {
         int pin = satusensor(sensor);
-        belokirimaju(speed);
+        belokiri(speed);
         if (pin == 1)
         {
             isFound = true;
@@ -181,7 +195,50 @@ int sampling()
     return error;
 }
 
-float lf_crossfind(int8_t speed)
+void lf_delay(int8_t speed, int delay_)
+{
+    float errt1, errt0 = 0, Interr = 0;
+    float KP = 0.15, KI = 0.1, KD = 0.1;
+    bool isFind = false;
+    int find;
+    unsigned long timeStart = millis();
+
+    while (!isFind)
+    {
+        find = detectcross();
+        if (find == 1 || (unsigned long)millis() - timeStart > delay_)
+        {
+            isFind = true;
+        }
+        errt1 = sampling();
+        if (errt1 != 0)
+            Interr += errt1;
+        else
+            Interr = 0;
+
+        float p = errt1 * KP;
+        float d = (errt1 - errt0) * KD;
+        float i = Interr * KI;
+        float out = p + i + d;
+
+        errt0 = errt1;
+
+        if (errt1 > 2)
+        {
+            belokananmaju(speed + out);
+        }
+        else if (errt1 < -2)
+        {
+            belokirimaju(speed + (out * -1));
+        }
+        else
+        {
+            testkeduamotor(speed, speed);
+        }
+    }
+}
+
+void lf_crossfind(int8_t speed)
 {
     float errt1, errt0 = 0, Interr = 0;
     float KP = 0.15, KI = 0.1, KD = 0.1;
@@ -207,7 +264,6 @@ float lf_crossfind(int8_t speed)
         float out = p + i + d;
 
         errt0 = errt1;
-        //Serial.println(errt1);
 
         if (errt1 > 2)
         {
@@ -224,7 +280,7 @@ float lf_crossfind(int8_t speed)
     }
 }
 
-float linefollower(int8_t speed)
+void linefollower(int8_t speed)
 {
     float errt1, errt0 = 0, Interr = 0;
     float KP = 0.15, KI = 0.1, KD = 0.1;
@@ -242,7 +298,6 @@ float linefollower(int8_t speed)
         float out = p + i + d;
 
         errt0 = errt1;
-        //Serial.println(errt1);
 
         if (errt1 > 2)
         {
