@@ -2,6 +2,7 @@
 
 void setup()
 {
+    //Setup pin out dan lain lain pada void setup arduino
     Serial.begin(115200);
     pinMode(pwm1, OUTPUT);
     pinMode(pwm2, OUTPUT);
@@ -15,8 +16,11 @@ void setup()
     pinMode(sPin[4], INPUT);
     pinMode(sPin[5], INPUT);
 
+    //Void setup saat di Arduino IDE
     initlibraryrobot();
 }
+
+// Program membaca sensor dan menampilkan nilai di Serial monitor
 void readsensor()
 {
     uint8_t readPin[6];
@@ -38,6 +42,7 @@ void readsensor()
     //   Serial.println();
 }
 
+// Program membaca garis dengan salah satu sensor yang di pilih dengan input nomor pin
 int satusensor(int pin)
 {
     uint8_t hasilbaca;
@@ -45,6 +50,7 @@ int satusensor(int pin)
     return hasilbaca;
 }
 
+// Program untuk mendeteksi perempatan dengan membaca sensor paling kanan dan kiri
 int detectcross()
 {
     uint8_t hasilbaca;
@@ -59,6 +65,7 @@ int detectcross()
     return hasilbaca;
 }
 
+// Program menjalankan motor bagian kanan dengan input speed
 void motorjalankanan(int8_t speed)
 {
     if (speed >= 0)
@@ -72,6 +79,8 @@ void motorjalankanan(int8_t speed)
         analogWrite(pwm2, speed * -1);
     }
 }
+
+// Program menjalankan motor bagian kiri dengan input speed
 void motorjalankiri(int8_t speed)
 {
     if (speed >= 0)
@@ -86,44 +95,54 @@ void motorjalankiri(int8_t speed)
     }
 }
 
+// Program menjalankan motor bagian kanan dengan input speed
 void testmotorkanan(int8_t speed)
 {
     motorjalankanan(speed);
 }
 
+// Program menjalankan motor bagian kiri dengan input speed
 void testmotorkiri(int8_t speed)
 {
     motorjalankiri(speed);
 }
 
+// Program menjalankan kedua motor dengan input speed kiri dan kanan
 void testkeduamotor(int8_t speed_kiri, int8_t speed_kanan)
 {
     motorjalankanan(speed_kanan);
     motorjalankiri(speed_kiri);
 }
 
+// Program belok kiri dengan input speed
 void belokiri(int8_t speed)
 {
     motorjalankanan(speed);
     motorjalankiri(-speed);
 }
 
+// Program belok kanan dengan input speed
 void belokanan(int8_t speed)
 {
     motorjalankanan(-speed);
     motorjalankiri(speed);
 }
+
+// Program belok kanan dengan speed kiri = 2x speed kanan
 void belokirimaju(int8_t speed)
 {
     motorjalankanan(speed);
     motorjalankiri(speed - (speed / 2));
 }
+
+// Program belok kiri dengan speed kanan = 2x speed kiri
 void belokananmaju(int8_t speed)
 {
     motorjalankanan(speed - (speed / 2));
     motorjalankiri(speed);
 }
 
+// Program motor maju dengan input speed dan timeout
 void majutimer(int8_t speed, int delay_)
 {
     bool isTimeout = false;
@@ -140,6 +159,7 @@ void majutimer(int8_t speed, int delay_)
     }
 }
 
+// Program belok kanan mencari garis dengan input speed dan pin sensor yang akan mendeteksi
 void linefindkanan(int8_t speed, int sensor)
 {
     bool isFound = false;
@@ -153,6 +173,8 @@ void linefindkanan(int8_t speed, int sensor)
         }
     }
 }
+
+// Program belok kiri mencari garis dengan input speed dan pin sensor yang akan mendeteksi
 void linefindkiri(int8_t speed, int sensor)
 {
     bool isFound = false;
@@ -161,12 +183,13 @@ void linefindkiri(int8_t speed, int sensor)
         int pin = satusensor(sensor);
         belokiri(speed);
         if (pin == 1)
-        {
+        { 
             isFound = true;
         }
     }
 }
 
+// Program mencari error dari nilai pembacaan sensor
 int sampling()
 {
     uint8_t readPin[6];
@@ -195,6 +218,7 @@ int sampling()
     return error;
 }
 
+// Program line follower dengan delay timeout
 void lf_delay(int8_t speed, int delay_)
 {
     float errt1, errt0 = 0, Interr = 0;
@@ -238,6 +262,7 @@ void lf_delay(int8_t speed, int delay_)
     }
 }
 
+// program line follower mencari persimpangan
 void lf_crossfind(int8_t speed)
 {
     float errt1, errt0 = 0, Interr = 0;
@@ -280,6 +305,7 @@ void lf_crossfind(int8_t speed)
     }
 }
 
+// Program line follower
 void linefollower(int8_t speed)
 {
     float errt1, errt0 = 0, Interr = 0;

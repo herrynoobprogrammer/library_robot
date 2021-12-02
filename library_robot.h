@@ -33,12 +33,14 @@ void belokanan(int8_t speed);
 void belokirimaju(int8_t speed);
 void belokananmaju(int8_t speed);
 void majutimer(int8_t speed, int delay_);
-int satusensor(int pin);
 void linefindkanan(int8_t speed, int sensor);
 void linefindkiri(int8_t speed, int sensor);
-int sampling();
 void lf_crossfind(int8_t speed);
 void lf_delay(int8_t speed, int delay_);
 void linefollower(int8_t speed);
+
 int detectcross();
+int sampling();
+int satusensor(int pin);
+
 #endif
