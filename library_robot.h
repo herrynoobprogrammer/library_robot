@@ -8,13 +8,14 @@
 #define pwm3 9
 #define pwm4 10
 //pin sensor
-#define s0 A0
+#define s0 A6
 #define s1 A1
-#define s2 A2
+#define s2 A0
 #define s3 A3
-#define s4 A4
-#define s5 A5
-const uint8_t sPin[6] = {s0, s1, s2, s3, s4, s5};
+#define s4 A2
+#define s5 A7
+#define buzzer 8
+const int sPin[6] = {s0, s1, s2, s3, s4, s5};
 #define initlibraryrobot initlibraryrobot
 
 void remotesetup();
@@ -38,9 +39,12 @@ void linefindkiri(int8_t speed, int sensor);
 void lf_crossfind(int8_t speed);
 void lf_delay(int8_t speed, int delay_);
 void linefollower(int8_t speed);
+void buzzeron(int8_t loop_);
+void test_sensor();
 
 int detectcross();
 int sampling();
+int sampling_new();
 int satusensor(int pin);
 
 #endif

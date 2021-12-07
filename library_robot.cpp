@@ -8,6 +8,7 @@ void setup()
     pinMode(pwm2, OUTPUT);
     pinMode(pwm3, OUTPUT);
     pinMode(pwm4, OUTPUT);
+    pinMode(buzzer, OUTPUT);
 
     pinMode(sPin[0], INPUT);
     pinMode(sPin[1], INPUT);
@@ -15,11 +16,40 @@ void setup()
     pinMode(sPin[3], INPUT);
     pinMode(sPin[4], INPUT);
     pinMode(sPin[5], INPUT);
-
     //Void setup saat di Arduino IDE
     initlibraryrobot();
 }
+//test sensor
+void test_sensor()
+{
+    int sensor[6];
 
+    sensor[0] = analogRead(sPin[0]);
+    sensor[0] = (sensor[0] > 100) ? 1 : 0;
+    sensor[1] = analogRead(sPin[1]);
+    sensor[1] = (sensor[1] > 100) ? 1 : 0;
+    sensor[2] = analogRead(sPin[2]);
+    sensor[2] = (sensor[2] > 100) ? 1 : 0;
+    sensor[3] = analogRead(sPin[3]);
+    sensor[3] = (sensor[3] > 100) ? 1 : 0;
+    sensor[4] = analogRead(sPin[4]);
+    sensor[4] = (sensor[4] > 100) ? 1 : 0;
+    sensor[5] = analogRead(sPin[5]);
+    sensor[5] = (sensor[5] > 100) ? 1 : 0;
+
+    Serial.print(sensor[0]);
+    Serial.print("-");
+    Serial.print(sensor[1]);
+    Serial.print("-");
+    Serial.print(sensor[2]);
+    Serial.print("-");
+    Serial.print(sensor[3]);
+    Serial.print("-");
+    Serial.print(sensor[4]);
+    Serial.print("-");
+    Serial.println(sensor[5]);
+}
+//akhir test sensor
 // Program membaca sensor dan menampilkan nilai di Serial monitor
 void readsensor()
 {
@@ -46,15 +76,33 @@ void readsensor()
 int satusensor(int pin)
 {
     uint8_t hasilbaca;
-    hasilbaca = digitalRead(sPin[pin]);
+    hasilbaca = analogRead(sPin[pin]);
+    hasilbaca = (hasilbaca > 100) ? 1 : 0;
     return hasilbaca;
+}
+
+//buzzer on
+void buzzeron(int8_t loop_)
+{
+    for (int i = 1; i <= loop_; i++)
+    {
+        digitalWrite(buzzer, HIGH);
+        majutimer(0, 100);
+        digitalWrite(buzzer, LOW);
+        majutimer(0, 100);
+    }
 }
 
 // Program untuk mendeteksi perempatan dengan membaca sensor paling kanan dan kiri
 int detectcross()
 {
     uint8_t hasilbaca;
-    if (digitalRead(sPin[0]) == 1 && digitalRead(sPin[5]) == 1)
+
+    int kiri = analogRead(sPin[0]);
+    kiri = (kiri > 100) ? 1 : 0;
+    int kanan = analogRead(sPin[5]);
+    kanan = (kanan > 100) ? 1 : 0;
+    if (kiri == 1 && kanan == 1)
     {
         hasilbaca = 1;
     }
@@ -183,11 +231,52 @@ void linefindkiri(int8_t speed, int sensor)
         int pin = satusensor(sensor);
         belokiri(speed);
         if (pin == 1)
-        { 
+        {
             isFound = true;
         }
     }
 }
+//Program sampling baru
+int sampling_new()
+{
+    int readPin[6];
+    int ska = 0, ski = 0, error = 0;
+    //kiri
+    readPin[0] = analogRead(sPin[0]);
+    readPin[0] = (readPin[0] > 100) ? 1 : 0;
+    readPin[1] = analogRead(sPin[1]);
+    readPin[1] = (readPin[1] > 100) ? 1 : 0;
+    readPin[2] = analogRead(sPin[2]);
+    readPin[2] = (readPin[2] > 100) ? 1 : 0;
+    //kanan
+    readPin[3] = analogRead(sPin[3]);
+    readPin[3] = (readPin[3] > 100) ? 1 : 0;
+    readPin[4] = analogRead(sPin[4]);
+    readPin[4] = (readPin[4] > 100) ? 1 : 0;
+    readPin[5] = analogRead(sPin[5]);
+    readPin[5] = (readPin[5] > 100) ? 1 : 0;
+
+    //data sensor
+    // Serial.print(readPin[0]);
+    // Serial.print("-");
+    // Serial.print(readPin[1]);
+    // Serial.print("-");
+    // Serial.print(readPin[2]);
+    // Serial.print("-");
+    // Serial.print(readPin[3]);
+    // Serial.print("-");
+    // Serial.print(readPin[4]);
+    // Serial.print("-");
+    // Serial.println(readPin[5]);
+    //error
+    ska = readPin[5] * 2 + readPin[4] * 4 + readPin[3] * 8;
+    ski = readPin[0] * 2 + readPin[1] * 4 + readPin[2] * 8;
+
+    error = ska - ski;
+    //Serial.println(error);
+    return error;
+}
+//Akhir program sampling baru
 
 // Program mencari error dari nilai pembacaan sensor
 int sampling()
@@ -234,7 +323,7 @@ void lf_delay(int8_t speed, int delay_)
         {
             isFind = true;
         }
-        errt1 = sampling();
+        errt1 = sampling_new();
         if (errt1 != 0)
             Interr += errt1;
         else
@@ -277,7 +366,7 @@ void lf_crossfind(int8_t speed)
         {
             isFind = true;
         }
-        errt1 = sampling();
+        errt1 = sampling_new();
         if (errt1 != 0)
             Interr += errt1;
         else
@@ -312,7 +401,7 @@ void linefollower(int8_t speed)
     float KP = 0.15, KI = 0.1, KD = 0.1;
     while (true)
     {
-        errt1 = sampling();
+        errt1 = sampling_new();
         if (errt1 != 0)
             Interr += errt1;
         else
