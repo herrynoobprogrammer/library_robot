@@ -8,12 +8,12 @@
 #define pwm3 9
 #define pwm4 10
 //pin sensor
-#define s0 A0
+#define s0 A6
 #define s1 A1
-#define s2 A2
+#define s2 A0
 #define s3 A3
-#define s4 A4
-#define s5 A5
+#define s4 A2
+#define s5 A7
 const uint8_t sPin[6] = {s0, s1, s2, s3, s4, s5};
 #define initlibraryrobot initlibraryrobot
 
@@ -22,6 +22,8 @@ void initlibraryrobot();
 void manualcontrol();
 void autocontrol();
 void readsensor();
+void lampusensor();
+void checkComplete();
 
 void motorjalankanan(int8_t speed);
 void motorjalankiri(int8_t speed);
@@ -40,7 +42,8 @@ void lf_delay(int8_t speed, int delay_);
 void linefollower(int8_t speed);
 
 int detectcross();
-int sampling();
+float sampling();
 int satusensor(int pin);
+void kirimdata(int data);
 
 #endif
