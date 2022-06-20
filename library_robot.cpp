@@ -88,14 +88,13 @@ void checkComplete()
     while (!isComplete)
     {
         testkeduamotor(0, 0);
-        if (Serial.available())
+        while (Serial.available())
         {
-            Serial.readBytes(mystr, 1);
-            Serial.println(mystr);
-            _str = mystr;
-            if (_str == "c")
-                isComplete = true;
+            _str = Serial.readString();
+            Serial.print(_str);
         }
+        if (_str == "0")
+            isComplete = true;
     }
     isComplete = false;
 }
@@ -232,6 +231,7 @@ void linefindkanan(int8_t speed, int sensor)
             isFound = true;
         }
     }
+    testkeduamotor(0, 0);
 }
 
 // Program belok kiri mencari garis dengan input speed dan pin sensor yang akan mendeteksi
@@ -247,6 +247,7 @@ void linefindkiri(int8_t speed, int sensor)
             isFound = true;
         }
     }
+    testkeduamotor(0, 0);
 }
 
 // Program mencari error dari nilai pembacaan sensor
@@ -270,12 +271,12 @@ float sampling()
     readPin[5] = analogRead(sPin[5]);
     readPin[5] = (readPin[5] > 350) ? 1 : 0;
     // data sensor
-    Serial.print(readPin[0]);
-    Serial.print(readPin[1]);
-    Serial.print(readPin[2]);
-    Serial.print(readPin[3]);
-    Serial.print(readPin[4]);
-    Serial.println(readPin[5]);
+    // Serial.print(readPin[0]);
+    // Serial.print(readPin[1]);
+    // Serial.print(readPin[2]);
+    // Serial.print(readPin[3]);
+    // Serial.print(readPin[4]);
+    // Serial.println(readPin[5]);
     // error
     ska = readPin[5] * 2 + readPin[4] * 4 + readPin[3] * 8;
     ski = readPin[0] * 2 + readPin[1] * 4 + readPin[2] * 8;
@@ -289,7 +290,7 @@ float sampling()
 void lf_delay(int8_t speed, int delay_)
 {
     float errt1, errt0 = 0, Interr = 0;
-    float KP = 0.15, KI = 0.1, KD = 0.1;
+    float KP = 0.15, KI = 0.0, KD = 0.1;
     bool isFind = false;
     int find;
     unsigned long timeStart = millis();
@@ -314,7 +315,7 @@ void lf_delay(int8_t speed, int delay_)
 
         errt0 = errt1;
 
-        Serial.println(errt1);
+        // Serial.println(errt1);
         if (errt1 > 2)
         {
             belokananmaju(speed + out);
@@ -334,7 +335,7 @@ void lf_delay(int8_t speed, int delay_)
 void lf_crossfind(int8_t speed)
 {
     float errt1, errt0 = 0, Interr = 0;
-    float KP = 0.15, KI = 0.1, KD = 0.1;
+    float KP = 0.15, KI = 0.0, KD = 0.1;
     bool isFind = false;
     int find;
 
@@ -357,7 +358,7 @@ void lf_crossfind(int8_t speed)
         float out = p + i + d;
 
         errt0 = errt1;
-        Serial.println(errt1);
+        // Serial.println(errt1);
         if (errt1 > 2)
         {
             belokananmaju(speed + out);
@@ -377,7 +378,7 @@ void lf_crossfind(int8_t speed)
 void linefollower(int8_t speed)
 {
     float errt1, errt0 = 0, Interr = 0;
-    float KP = 0.15, KI = 0.1, KD = 0.1;
+    float KP = 0.15, KI = 0.0, KD = 0.1;
     while (true)
     {
         errt1 = sampling();
