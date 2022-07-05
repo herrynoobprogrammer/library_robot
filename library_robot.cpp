@@ -80,6 +80,27 @@ void kirimdata(int data)
 }
 
 // check complete
+void ifReadcond(int data)
+{
+    bool isComplete = false;
+    String _str;
+    char mystr[10];
+    int _strint = 0;
+    while (!isComplete)
+    {
+        testkeduamotor(0, 0);
+        while (Serial.available())
+        {
+            _str = Serial.readString();
+            _strint = _str.toInt();
+            Serial.print(_str);
+        }
+        if (_strint == data)
+            isComplete = true;
+    }
+    isComplete = false;
+}
+
 void checkComplete()
 {
     bool isComplete = false;
@@ -329,6 +350,7 @@ void lf_delay(int8_t speed, int delay_)
             testkeduamotor(speed, speed);
         }
     }
+    testkeduamotor(0, 0);
 }
 
 // program line follower mencari persimpangan
@@ -372,6 +394,7 @@ void lf_crossfind(int8_t speed)
             testkeduamotor(speed, speed);
         }
     }
+    testkeduamotor(0, 0);
 }
 
 // Program line follower

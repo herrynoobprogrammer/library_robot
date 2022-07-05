@@ -45,5 +45,6 @@ int detectcross();
 float sampling();
 int satusensor(int pin);
 void kirimdata(int data);
+void ifReadcond(int data);
 
 #endif
