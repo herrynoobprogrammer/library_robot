@@ -16,8 +16,27 @@ void setup()
     pinMode(sPin[4], INPUT);
     pinMode(sPin[5], INPUT);
 
+    pinMode(buzzer, OUTPUT);
+    pinMode(led1, OUTPUT);
+    pinMode(led2, OUTPUT);
+
     // Void setup saat di Arduino IDE
     initlibraryrobot();
+}
+
+void buzzeron(int jumlah)
+{
+    for (int a = 0; a <= jumlah; a++)
+    {
+        digitalWrite(buzzer, HIGH);
+        digitalWrite(led1, LOW);
+        digitalWrite(led2, HIGH);
+        delay(300);
+        digitalWrite(buzzer, LOW);
+        digitalWrite(led1, HIGH);
+        digitalWrite(led2, LOW);
+        delay(300);
+    }
 }
 
 // Program bermain lampu sensor
@@ -353,6 +372,48 @@ void lf_delay(int8_t speed, int delay_)
     testkeduamotor(0, 0);
 }
 
+void lf_crossfindArah(int8_t speed, bool arah)
+{
+    float errt1, errt0 = 0, Interr = 0;
+    float KP = 1, KI = 0.00, KD = 5;
+    bool isFind = false;
+    int find;
+
+    while (!isFind)
+    {
+        find = detectcross();
+        if (find == 1)
+        {
+            isFind = true;
+        }
+        errt1 = sampling();
+        if (errt1 != 0)
+            Interr += errt1;
+        else
+            Interr = 0;
+
+        float p = errt1 * KP;
+        float d = (errt1 - errt0) * KD;
+        float i = Interr * KI;
+        float out = p + i + d;
+
+        errt0 = errt1;
+        // Serial.println(errt1);
+        if (errt1 <- 2)
+        {
+            belokananmaju((speed * -1) + out);
+        }
+        else if (errt1 > 2)
+        {
+            belokirimaju((speed * -1) + (out * -1));
+        }
+        else
+        {
+            testkeduamotor((speed * -1), (speed  * -1));
+        }
+    }
+    testkeduamotor(0,0);
+}
 // program line follower mencari persimpangan
 void lf_crossfind(int8_t speed)
 {
@@ -393,6 +454,21 @@ void lf_crossfind(int8_t speed)
         {
             testkeduamotor(speed, speed);
         }
+    }
+    testkeduamotor(0, 0);
+}
+
+void lf_crsfindskip(int8_t speed, bool arah, int skip)
+{
+    bool isCom = false;
+    int skipC = 0;
+    while (!isCom)
+    {
+        lf_crossfind(speed);
+        skipC++;
+        delay(50);
+        if (skipC == skip)
+            isCom = true;
     }
     testkeduamotor(0, 0);
 }

@@ -17,6 +17,14 @@
 const uint8_t sPin[6] = {s0, s1, s2, s3, s4, s5};
 #define initlibraryrobot initlibraryrobot
 
+#define ff true
+#define bb false
+
+//led 
+#define buzzer 8
+#define led1 12
+#define led2 13
+
 void remotesetup();
 void initlibraryrobot();
 void manualcontrol();
@@ -40,6 +48,9 @@ void linefindkiri(int8_t speed, int sensor);
 void lf_crossfind(int8_t speed);
 void lf_delay(int8_t speed, int delay_);
 void linefollower(int8_t speed);
+void lf_crsfindskip(int8_t speed, bool arah, int skip);
+void buzzeron(int jumlah);
+void lf_crossfindArah(int8_t speed, bool arah);
 
 int detectcross();
 float sampling();
