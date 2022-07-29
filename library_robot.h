@@ -7,20 +7,22 @@
 #define pwm2 6
 #define pwm3 9
 #define pwm4 10
-//pin sensor
+// pin sensor
 #define s0 A6
 #define s1 A1
 #define s2 A0
 #define s3 A3
 #define s4 A2
 #define s5 A7
-const uint8_t sPin[6] = {s0, s1, s2, s3, s4, s5};
+#define st A4
+
+const uint8_t sPin[7] = {s0, s1, s2, st, s3, s4, s5};
 #define initlibraryrobot initlibraryrobot
 
 #define ff true
 #define bb false
 
-//led 
+// led
 #define buzzer 8
 #define led1 12
 #define led2 13
@@ -51,6 +53,10 @@ void linefollower(int8_t speed);
 void lf_crsfindskip(int8_t speed, bool arah, int skip);
 void buzzeron(int jumlah);
 void lf_crossfindArah(int8_t speed, bool arah);
+int caseSensor();
+int samplingSensor();
+void lf_newcross(int speed_);
+void pidvalue(float kp_, float ki_, float kd_);
 
 int detectcross();
 float sampling();

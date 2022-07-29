@@ -15,6 +15,7 @@ void setup()
     pinMode(sPin[3], INPUT);
     pinMode(sPin[4], INPUT);
     pinMode(sPin[5], INPUT);
+    pinMode(sPin[6], INPUT);
 
     pinMode(buzzer, OUTPUT);
     pinMode(led1, OUTPUT);
@@ -62,6 +63,165 @@ void lampusensor()
         delay(50);
         digitalWrite(sPin[i], HIGH);
         delay(50);
+    }
+}
+
+// read new sensor
+int caseSensor()
+{
+    int sensor[7];
+    int casesensor = 0;
+
+    sensor[0] = analogRead(sPin[0]);
+    sensor[0] = (sensor[0] > 220) ? 1 : 0;
+    sensor[1] = analogRead(sPin[1]);
+    sensor[1] = (sensor[1] > 220) ? 1 : 0;
+    sensor[2] = analogRead(sPin[2]);
+    sensor[2] = (sensor[2] > 220) ? 1 : 0;
+    sensor[3] = analogRead(sPin[3]);
+    sensor[3] = (sensor[3] > 220) ? 1 : 0;
+    sensor[4] = analogRead(sPin[4]);
+    sensor[4] = (sensor[4] > 220) ? 1 : 0;
+    sensor[5] = analogRead(sPin[5]);
+    sensor[5] = (sensor[5] > 220) ? 1 : 0;
+    sensor[6] = analogRead(sPin[6]);
+    sensor[6] = (sensor[6] > 220) ? 1 : 0;
+
+    // Serial.print(sensor[0]);
+    // Serial.print("-");
+    // Serial.print(sensor[1]);
+    // Serial.print("-");
+    // Serial.print(sensor[2]);
+    // Serial.print("-");
+    // Serial.print(sensor[3]);
+    // Serial.print("-");
+    // Serial.print(sensor[4]);
+    // Serial.print("-");
+    // Serial.print(sensor[5]);
+    // Serial.print("-");
+    // Serial.println(sensor[6]);
+
+    casesensor = (sensor[6] * 1) + (sensor[5] * 2) + (sensor[4] * 4) + (sensor[3] * 8) + (sensor[2] * 16) + (sensor[1] * 32) + (sensor[0] * 64);
+    return casesensor;
+}
+
+// sampling data sensor
+int samplingSensor()
+{
+    int sampling = 0;
+    sampling = caseSensor();
+    int error = 0;
+    switch (sampling)
+    {
+    case 0b0000000:
+        error = 1;
+        break;
+    case 0b1000000:
+        error = -60;
+        break;
+    case 0b1100000:
+        error = -50;
+        break;
+    case 0b0100000:
+        error = -40;
+        break;
+    case 0b0110000:
+        error = -30;
+        break;
+    case 0b0010000:
+        error = -20;
+        break;
+    case 0b0011000:
+        error = -10;
+        break;
+    case 0b0001000:
+        error = 0;
+        break;
+    case 0b0001100:
+        error = 10;
+        break;
+    case 0b0000100:
+        error = 20;
+        break;
+    case 0b0000110:
+        error = 30;
+        break;
+    case 0b0000010:
+        error = 40;
+        break;
+    case 0b0000011:
+        error = 50;
+        break;
+    case 0b0000001:
+        error = 60;
+        break;
+    }
+    return error;
+}
+
+// pid
+float kp = 0.00;
+float ki = 0.0;
+float kd = 0.00;
+void pidvalue(float kp_, float ki_, float kd_)
+{
+    kp = kp_;
+    kd = kd_;
+    ki = ki_;
+}
+
+// line follower baru
+void lf_newcross(int speed_)
+{
+    float errorBf, error, lasterror = 0, sumerror = 0;
+    float KP = kp, KI = ki, KD = kd;
+    float P, I, D, out;
+    float speedKa, speedKi;
+    bool isFind = false;
+    bool errorB = false;
+
+    while (!isFind)
+    {
+        error = samplingSensor();
+        errorB = detectcross();
+        if (errorB == 1)
+            isFind = true;
+        if (error != 0)
+            sumerror += error;
+        else
+            sumerror = 0;
+
+        P = error * KP;
+        D = (error - lasterror) * KD;
+        I = sumerror * KI;
+        out = P + I + D;
+
+        error = lasterror;
+
+        speedKi = speed_ + out;
+        speedKa = speed_ - out;
+
+        if (speedKi >= 255)
+            speedKi = 255;
+        if (speedKa >= 255)
+            speedKa = 255;
+        if (speedKi <= -255)
+            speedKi = -255;
+        if (speedKa <= -255)
+            speedKa = -255;
+
+        if (error > 2)
+        {
+            belokirimaju(speed_ + out);
+        }
+        else if (error < -2)
+        {
+            belokananmaju(speed_ + (out * -1));
+        }
+        else
+        {
+            testkeduamotor(speed_, speed_);
+        }
     }
 }
 
@@ -399,7 +559,7 @@ void lf_crossfindArah(int8_t speed, bool arah)
 
         errt0 = errt1;
         // Serial.println(errt1);
-        if (errt1 <- 2)
+        if (errt1 < -2)
         {
             belokananmaju((speed * -1) + out);
         }
@@ -409,10 +569,10 @@ void lf_crossfindArah(int8_t speed, bool arah)
         }
         else
         {
-            testkeduamotor((speed * -1), (speed  * -1));
+            testkeduamotor((speed * -1), (speed * -1));
         }
     }
-    testkeduamotor(0,0);
+    testkeduamotor(0, 0);
 }
 // program line follower mencari persimpangan
 void lf_crossfind(int8_t speed)
